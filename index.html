@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECOM OS — Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #03070f;
+  --bg2: #060d1a;
+  --bg3: #0a1628;
+  --cyan: #00d4ff;
+  --cyan2: #0099cc;
+  --cyan-dim: rgba(0,212,255,0.08);
+  --cyan-glow: rgba(0,212,255,0.15);
+  --cyan-border: rgba(0,212,255,0.25);
+  --green: #00ff88;
+  --green-dim: rgba(0,255,136,0.08);
+  --green-border: rgba(0,255,136,0.25);
+  --amber: #ffaa00;
+  --amber-dim: rgba(255,170,0,0.08);
+  --red: #ff3355;
+  --red-dim: rgba(255,51,85,0.08);
+  --red-border: rgba(255,51,85,0.25);
+  --text: #c8e8f8;
+  --text2: #5a8aaa;
+  --text3: #2a4a6a;
+  --glance: #00d4ff;
+  --poncho: #aa44ff;
+  --r: 4px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scanline + grid overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.012) 2px, rgba(0,212,255,0.012) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,212,255,0.025) 40px, rgba(0,212,255,0.026) 41px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Glow orbs ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 400px; height: 400px; background: rgba(0,212,255,0.04); top: -100px; left: -100px; }
+.orb-2 { width: 300px; height: 300px; background: rgba(170,68,255,0.05); bottom: 0; right: 0; }
+
+/* ── Layout ── */
+.shell { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── Topbar ── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 52px;
+  border-bottom: 1px solid var(--cyan-border);
+  background: rgba(3,7,15,0.9);
+  backdrop-filter: blur(10px);
+  position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px; font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0,212,255,0.5);
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.logo-sub { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); letter-spacing: 2px; }
+
+.topbar-center { display: flex; align-items: center; gap: 6px; }
+.store-tab {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 14px;
+  border: 1px solid var(--text3);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.store-tab:hover { border-color: var(--cyan-border); color: var(--cyan); }
+.store-tab.active-all { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+.store-tab.active-glance { border-color: var(--cyan-border); color: var(--cyan); background: var(--cyan-dim); }
+.store-tab.active-poncho { border-color: rgba(170,68,255,0.3); color: var(--poncho); background: rgba(170,68,255,0.08); }
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.sys-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 1px;
+  padding: 3px 8px;
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  background: var(--green-dim);
+}
+.time-display { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--cyan); letter-spacing: 2px; }
+
+/* ── Main grid ── */
+.grid-main {
+  display: grid;
+  grid-template-columns: 260px 1fr 280px;
+  grid-template-rows: auto 1fr;
+  gap: 1px;
+  flex: 1;
+  background: var(--cyan-border);
+}
+.panel {
+  background: var(--bg);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,212,255,0.02) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── Panel header ── */
+.ph {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cyan-border);
+  background: rgba(0,212,255,0.03);
+}
+.ph-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; color: var(--cyan2);
+  display: flex; align-items: center; gap: 6px;
+}
+.ph-title::before { content: '//'; color: var(--text3); }
+.ph-badge { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 6px; letter-spacing: 1px; }
+
+/* ── Voice / command panel ── */
+.cmd-panel {
+  grid-column: 1 / -1;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--cyan-border);
+  background: rgba(0,212,255,0.02);
+  display: flex; align-items: center; gap: 12px;
+}
+.cmd-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); letter-spacing: 2px; white-space: nowrap; }
+.cmd-input-wrap { flex: 1; position: relative; display: flex; align-items: center; gap: 8px; }
+.cmd-input {
+  flex: 1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  background: rgba(0,212,255,0.05);
+  border: 1px solid var(--cyan-border);
+  color: var(--cyan);
+  padding: 8px 12px;
+  outline: none;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  letter-spacing: 1px;
+}
+.cmd-input::placeholder { color: var(--text3); }
+.cmd-input:focus { border-color: var(--cyan); background: rgba(0,212,255,0.08); box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+.mic-btn {
+  width: 36px; height: 36px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid var(--cyan-border);
+  color: var(--cyan);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all 0.2s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.mic-btn:hover { background: rgba(0,212,255,0.15); box-shadow: 0 0 15px rgba(0,212,255,0.2); }
+.mic-btn.listening { background: var(--red-dim); border-color: var(--red-border); color: var(--red); animation: pulse-red 1s infinite; }
+.mic-btn.listening::after { content: ''; position: absolute; width: 36px; height: 36px; border: 1px solid var(--red); border-radius: 0; animation: ripple 1s infinite; }
+@keyframes pulse-red { 0%,100%{box-shadow:0 0 10px rgba(255,51,85,0.3)} 50%{box-shadow:0 0 25px rgba(255,51,85,0.6)} }
+@keyframes ripple { 0%{transform:scale(1);opacity:1} 100%{transform:scale(1.5);opacity:0} }
+.send-btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px;
+  padding: 8px 16px; background: var(--cyan-dim); border: 1px solid var(--cyan-border);
+  color: var(--cyan); cursor: pointer; transition: all 0.2s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  white-space: nowrap;
+}
+.send-btn:hover { background: var(--cyan-glow); box-shadow: 0 0 20px rgba(0,212,255,0.2); }
+.cmd-response {
+  font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text);
+  background: rgba(0,212,255,0.05); border: 1px solid var(--cyan-border);
+  border-left: 3px solid var(--cyan);
+  padding: 8px 12px; margin-top: 8px; display: none;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 6px 100%);
+  line-height: 1.6;
+}
+.cmd-response.visible { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:translateX(0)} }
+.waveform { display: flex; align-items: center; gap: 2px; height: 20px; }
+.wave-b { width: 3px; background: var(--red); border-radius: 1px; animation: wav 0.6s ease infinite; }
+.wave-b:nth-child(2){animation-delay:0.1s} .wave-b:nth-child(3){animation-delay:0.2s} .wave-b:nth-child(4){animation-delay:0.3s} .wave-b:nth-child(5){animation-delay:0.4s}
+@keyframes wav { 0%,100%{height:3px} 50%{height:16px} }
+
+/* ── Radar ── */
+.radar-wrap { padding: 16px; display: flex; flex-direction: column; align-items: center; }
+.radar-svg { width: 200px; height: 200px; }
+.radar-svg circle { fill: none; stroke: rgba(0,212,255,0.15); stroke-width: 0.5; }
+.radar-svg line { stroke: rgba(0,212,255,0.1); stroke-width: 0.5; }
+.radar-sweep {
+  transform-origin: 100px 100px;
+  animation: sweep 3s linear infinite;
+}
+@keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.radar-blip { animation: blip 3s ease-in-out infinite; }
+@keyframes blip { 0%,100%{opacity:0} 50%{opacity:1} }
+
+/* ── KPIs ── */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--cyan-border); }
+.kpi-box { background: var(--bg); padding: 14px 16px; position: relative; overflow: hidden; }
+.kpi-box::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; }
+.kpi-box.c-cyan::after { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.kpi-box.c-green::after { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.kpi-box.c-amber::after { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+.kpi-box.c-red::after { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.kpi-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text2); margin-bottom: 6px; }
+.kpi-val { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; letter-spacing: -1px; }
+.kpi-val.cyan { color: var(--cyan); text-shadow: 0 0 15px rgba(0,212,255,0.4); }
+.kpi-val.green { color: var(--green); text-shadow: 0 0 15px rgba(0,255,136,0.4); }
+.kpi-val.amber { color: var(--amber); text-shadow: 0 0 15px rgba(255,170,0,0.4); }
+.kpi-val.red { color: var(--red); text-shadow: 0 0 15px rgba(255,51,85,0.4); }
+.kpi-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; margin-top: 4px; }
+.kpi-sub.up { color: var(--green); }
+.kpi-sub.down { color: var(--red); }
+.kpi-sub.flat { color: var(--text2); }
+
+/* ── Revenue chart ── */
+.rev-chart { display: flex; align-items: flex-end; gap: 3px; height: 60px; padding: 0 16px 12px; }
+.rev-bar { flex: 1; border-radius: 1px 1px 0 0; position: relative; cursor: default; transition: opacity 0.2s; }
+.rev-bar:hover { opacity: 0.8; }
+.rev-labels { display: flex; justify-content: space-between; padding: 0 16px; }
+.rev-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); }
+
+/* ── Winners list ── */
+.winner-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid rgba(0,212,255,0.06);
+  transition: background 0.15s;
+}
+.winner-item:hover { background: rgba(0,212,255,0.04); }
+.w-score {
+  font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border: 1px solid var(--green-border);
+  color: var(--green); background: var(--green-dim); min-width: 36px; text-align: center;
+}
+.w-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; letter-spacing: 0.3px; }
+.w-run { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); }
+
+/* ── Module cards ── */
+.module-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--cyan-border); }
+.mod-card {
+  background: var(--bg); padding: 14px;
+  cursor: pointer; transition: background 0.2s; position: relative;
+  border-left: 2px solid transparent;
+}
+.mod-card:hover { background: rgba(0,212,255,0.04); }
+.mod-card.ok { border-left-color: var(--green); }
+.mod-card.warn { border-left-color: var(--amber); }
+.mod-card.alert { border-left-color: var(--red); }
+.mod-num { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 900; color: var(--text3); margin-bottom: 4px; }
+.mod-name { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; margin-bottom: 3px; }
+.mod-status { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.5px; }
+.mod-status.ok { color: var(--green); }
+.mod-status.warn { color: var(--amber); }
+.mod-status.alert { color: var(--red); }
+.mod-arrow { position: absolute; top: 14px; right: 14px; font-size: 16px; color: var(--text3); transition: color 0.2s, transform 0.2s; }
+.mod-card:hover .mod-arrow { color: var(--cyan); transform: translate(2px, -2px); }
+
+/* ── Alert feed ── */
+.alert-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 14px; border-bottom: 1px solid rgba(0,212,255,0.06);
+  font-family: 'Share Tech Mono', monospace;
+}
+.alert-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.alert-text { font-size: 11px; color: var(--text); flex: 1; line-height: 1.5; letter-spacing: 0.3px; }
+.alert-time { font-size: 9px; color: var(--text3); white-space: nowrap; letter-spacing: 1px; }
+
+/* ── Ads perf ── */
+.ads-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-bottom: 1px solid rgba(0,212,255,0.06);
+}
+.ads-name { font-size: 12px; color: var(--text); flex: 1; }
+.ads-track { height: 3px; background: rgba(0,212,255,0.1); flex: 0 0 70px; border-radius: 1px; overflow: hidden; }
+.ads-fill { height: 100%; border-radius: 1px; }
+.ads-roas { font-family: 'Share Tech Mono', monospace; font-size: 11px; min-width: 28px; text-align: right; }
+.ads-cpa { font-family: 'Share Tech Mono', monospace; font-size: 10px; min-width: 48px; text-align: right; }
+
+/* ── Scroll panels ── */
+.panel-scroll { overflow-y: auto; max-height: 280px; }
+.panel-scroll::-webkit-scrollbar { width: 2px; }
+.panel-scroll::-webkit-scrollbar-thumb { background: var(--cyan-border); }
+
+/* ── Nav buttons ── */
+.nav-btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px;
+  padding: 4px 10px; background: transparent; border: 1px solid var(--text3);
+  color: var(--text2); cursor: pointer; transition: all 0.2s;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.nav-btn:hover { border-color: var(--cyan-border); color: var(--cyan); background: var(--cyan-dim); }
+
+/* ── System log ── */
+.log-item { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); padding: 3px 14px; letter-spacing: 0.5px; }
+.log-item .ts { color: var(--text3); margin-right: 8px; }
+.log-item .msg-ok { color: var(--green); }
+.log-item .msg-warn { color: var(--amber); }
+.log-item .msg-err { color: var(--red); }
+
+/* ── Decorative corner ── */
+.corner-tl { position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-top: 1px solid var(--cyan); border-left: 1px solid var(--cyan); }
+.corner-br { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; border-bottom: 1px solid var(--cyan); border-right: 1px solid var(--cyan); }
+
+/* ── Animate in ── */
+.panel { animation: panelIn 0.4s ease both; }
+.panel:nth-child(2) { animation-delay: 0.05s; }
+.panel:nth-child(3) { animation-delay: 0.1s; }
+.panel:nth-child(4) { animation-delay: 0.15s; }
+.panel:nth-child(5) { animation-delay: 0.2s; }
+@keyframes panelIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Bottom status bar ── */
+.statusbar {
+  height: 28px; display: flex; align-items: center; gap: 24px;
+  padding: 0 20px; background: rgba(0,212,255,0.03);
+  border-top: 1px solid var(--cyan-border);
+  font-family: 'Share Tech Mono', monospace; font-size: 9px;
+  color: var(--text2); letter-spacing: 1px;
+}
+.sb-item { display: flex; align-items: center; gap: 6px; }
+.sb-dot { width: 5px; height: 5px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <div class="logo"><div class="logo-dot"></div>ECOM OS</div>
+    <div class="logo-sub">AUTONOMOUS SCALING SYSTEM v2.0</div>
+  </div>
+  <div class="topbar-center">
+    <button class="store-tab active-all" id="tab-all" onclick="setStore('all')">ALL STORES</button>
+    <button class="store-tab" id="tab-glance" onclick="setStore('glance')">GLANCEDESIGN</button>
+    <button class="store-tab" id="tab-poncho" onclick="setStore('poncho')">PONCHOVIBE</button>
+  </div>
+  <div class="topbar-right">
+    <div class="sys-badge">● SYSTEM OPTIMAL</div>
+    <div class="time-display" id="clock">--:--:--</div>
+  </div>
+</div>
+
+<!-- COMMAND BAR -->
+<div class="cmd-panel">
+  <span class="cmd-label">// CMD</span>
+  <div style="flex:1;">
+    <div class="cmd-input-wrap">
+      <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" aria-label="Activer microphone">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <div class="waveform" id="waveform" style="display:none;">
+        <div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div>
+      </div>
+      <input class="cmd-input" type="text" id="cmd-input" placeholder="AWAITING COMMAND... (ex: montre les winners, état des ads, revenus glancedesign)" onkeydown="if(event.key==='Enter')sendCmd()">
+      <span id="voice-status" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);white-space:nowrap;letter-spacing:1px;">READY</span>
+      <button class="send-btn" onclick="sendCmd()">▶ EXECUTE</button>
+    </div>
+    <div class="cmd-response" id="cmd-response"></div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="grid-main" style="flex:1;">
+
+  <!-- LEFT PANEL — Radar + system -->
+  <div class="panel" style="grid-row:1/3;display:flex;flex-direction:column;">
+    <div class="corner-tl"></div>
+    <div class="ph"><span class="ph-title">RADAR SCANNER</span><span class="ph-badge" style="border:1px solid var(--green-border);color:var(--green);background:var(--green-dim);">LIVE</span></div>
+
+    <div class="radar-wrap">
+      <svg class="radar-svg" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="90"/>
+        <circle cx="100" cy="100" r="67.5"/>
+        <circle cx="100" cy="100" r="45"/>
+        <circle cx="100" cy="100" r="22.5"/>
+        <line x1="100" y1="10" x2="100" y2="190"/>
+        <line x1="10" y1="100" x2="190" y2="100"/>
+        <line x1="36" y1="36" x2="164" y2="164"/>
+        <line x1="164" y1="36" x2="36" y2="164"/>
+        <defs>
+          <radialGradient id="sweep-grad" cx="100" cy="100" r="90" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(0,212,255,0.3)"/>
+            <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
+          </radialGradient>
+        </defs>
+        <g class="radar-sweep">
+          <path d="M100,100 L100,10 A90,90 0 0,1 190,100 Z" fill="url(#sweep-grad)" opacity="0.6"/>
+          <line x1="100" y1="100" x2="100" y2="10" stroke="var(--cyan)" stroke-width="1" opacity="0.8"/>
+        </g>
+        <circle cx="100" cy="100" r="3" fill="var(--cyan)" opacity="0.8"/>
+        <circle class="radar-blip" cx="130" cy="70" r="4" fill="var(--green)" style="animation-delay:0.5s;"/>
+        <circle class="radar-blip" cx="75" cy="120" r="3" fill="var(--green)" style="animation-delay:1s;"/>
+        <circle class="radar-blip" cx="155" cy="115" r="3" fill="var(--amber)" style="animation-delay:1.5s;"/>
+        <circle class="radar-blip" cx="65" cy="65" r="4" fill="var(--green)" style="animation-delay:0.2s;"/>
+        <circle class="radar-blip" cx="140" cy="140" r="2" fill="var(--red)" style="animation-delay:2s;"/>
+        <text x="100" y="105" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="rgba(0,212,255,0.5)" letter-spacing="2">SCANNING</text>
+      </svg>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:2px;margin-top:4px;" id="radar-stat">12 WINNERS DETECTED</div>
+    </div>
+
+    <div class="ph" style="margin-top:auto;"><span class="ph-title">KPI OVERVIEW</span></div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="ph" style="margin-top:12px;"><span class="ph-title">SYSTEM LOG</span></div>
+    <div id="sys-log" style="padding:6px 0;"></div>
+  </div>
+
+  <!-- CENTER PANEL — Revenue + Modules -->
+  <div class="panel" style="display:flex;flex-direction:column;">
+    <div class="ph"><span class="ph-title">REVENUE STREAM</span><span id="rev-total-label" class="ph-badge" style="border:1px solid var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);"></span></div>
+    <div class="rev-chart" id="rev-chart" style="padding-top:12px;"></div>
+    <div class="rev-labels"><span class="rev-label">LUN</span><span class="rev-label">MAR</span><span class="rev-label">MER</span><span class="rev-label">JEU</span><span class="rev-label">VEN</span><span class="rev-label">SAM</span><span class="rev-label">DIM</span></div>
+
+    <div class="ph" style="margin-top:12px;"><span class="ph-title">MODULE STATUS</span><button class="nav-btn" onclick="alert('Déploie sur Vercel pour accéder aux modules individuels')">OPEN ALL ↗</button></div>
+    <div class="module-grid" id="module-grid"></div>
+  </div>
+
+  <!-- RIGHT PANEL — Winners + Ads + Alerts -->
+  <div class="panel" style="grid-row:1/3;display:flex;flex-direction:column;">
+    <div class="corner-br"></div>
+
+    <div class="ph"><span class="ph-title">WINNERS DETECTED</span><span class="ph-badge" style="border:1px solid var(--green-border);color:var(--green);background:var(--green-dim);" id="winners-count">0</span></div>
+    <div class="panel-scroll" id="winners-list"></div>
+
+    <div class="ph" style="margin-top:8px;"><span class="ph-title">ADS PERFORMANCE</span></div>
+    <div id="ads-list"></div>
+
+    <div class="ph" style="margin-top:8px;"><span class="ph-title">ALERT FEED</span><span class="ph-badge" id="alert-badge" style="border:1px solid var(--red-border);color:var(--red);background:var(--red-dim);"></span></div>
+    <div class="panel-scroll" id="alerts-list" style="flex:1;"></div>
+  </div>
+
+  <!-- BOTTOM CENTER — Ads detail -->
+  <div class="panel">
+    <div class="ph"><span class="ph-title">CAMPAIGN MATRIX</span><span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:1px;">CPA MAX: <span id="cpa-display" style="color:var(--amber);">40€</span></span></div>
+    <div id="campaign-table" style="padding:4px 0;"></div>
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb-item"><div class="sb-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>MODULES: 6/6 ONLINE</div>
+  <div class="sb-item"><div class="sb-dot" style="background:var(--cyan);"></div>SHOPIFY API: PENDING</div>
+  <div class="sb-item"><div class="sb-dot" style="background:var(--cyan);"></div>META API: PENDING</div>
+  <div class="sb-item"><div class="sb-dot" style="background:var(--cyan);"></div>GOOGLE API: PENDING</div>
+  <div class="sb-item" style="margin-left:auto;"><div class="sb-dot" style="background:var(--green);"></div>VOICE ENGINE: READY</div>
+  <div class="sb-item"><div class="sb-dot" style="background:var(--amber);box-shadow:0 0 6px var(--amber);animation:blink 2s infinite;"></div>AWAITING COMMAND</div>
+</div>
+
+</div><!-- .shell -->
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+const DATA = {
+  all:{
+    kpis:[
+      {l:'CA 30J',v:'12 840€',cls:'cyan',c:'c-cyan',dir:'up',s:'+18%'},
+      {l:'COMMANDES',v:'67',cls:'green',c:'c-green',dir:'up',s:'+12'},
+      {l:'ROAS MOY',v:'2.8x',cls:'amber',c:'c-amber',dir:'up',s:'MIN 2.5x ✓'},
+      {l:'CPA MOY',v:'31€',cls:'green',c:'c-green',dir:'up',s:'MAX 40€ ✓'},
+    ],
+    rev:[210,185,310,275,390,420,480],
+    winners:[
+      {name:'Lampe arc minimaliste',score:91,run:22,store:'glance',trend:'up'},
+      {name:'Miroir arche doré 120cm',score:87,run:18,store:'glance',trend:'up'},
+      {name:'Vase céramique strié',score:82,run:14,store:'glance',trend:'flat'},
+      {name:'Poncho laine alpaga',score:74,run:11,store:'poncho',trend:'up'},
+      {name:'Poncho oversize camel',score:71,run:8,store:'poncho',trend:'flat'},
+    ],
+    ads:[
+      {n:'Lampe arc — Shopping FR',roas:3.5,cpa:14,ok:true,plat:'G'},
+      {n:'Vase — PMax',roas:2.9,cpa:10,ok:true,plat:'G'},
+      {n:'Poncho — Feed Meta',roas:3.2,cpa:15,ok:true,plat:'M'},
+      {n:'Poncho — Lookalike 3%',roas:0.7,cpa:67,ok:false,plat:'M'},
+      {n:'Miroir — Retarget',roas:0.6,cpa:73,ok:false,plat:'G'},
+    ],
+    alerts:[
+      {t:'Poncho Lookalike 3% — CPA 67€ > 40€ → COUPER',c:'#ff3355',time:'12min',lvl:'red'},
+      {t:'Miroir Retarget — CPA 73€ marge 8% → COUPER',c:'#ff3355',time:'28min',lvl:'red'},
+      {t:'Lampe arc Shopping — ROAS 3.5x → SCALER +30%',c:'#00ff88',time:'1h',lvl:'green'},
+      {t:'3 fiches produit en attente — Module 4',c:'#ffaa00',time:'2h',lvl:'amber'},
+    ],
+    mods:[
+      {n:'RADAR WINNERS',sub:'12 winners · 1 247 ads',s:'ok'},
+      {n:'CREATIVE FACTORY',sub:'3 briefs en attente',s:'warn'},
+      {n:'SOURCING ENGINE',sub:'4 fournisseurs actifs',s:'ok'},
+      {n:'PRODUCT BUILDER',sub:'3 fiches en draft',s:'warn'},
+      {n:'ADS OPTIMIZER',sub:'2 alertes critiques',s:'alert'},
+      {n:'TEAM HUB',sub:'8 tâches · 2 en retard',s:'warn'},
+    ],
+  },
+  glance:{
+    kpis:[
+      {l:'CA 30J',v:'9 240€',cls:'cyan',c:'c-cyan',dir:'up',s:'+22%'},
+      {l:'COMMANDES',v:'48',cls:'green',c:'c-green',dir:'up',s:'+15'},
+      {l:'ROAS GOOGLE',v:'3.1x',cls:'amber',c:'c-amber',dir:'up',s:'SHOPPING'},
+      {l:'PANIER MOY',v:'192€',cls:'green',c:'c-green',dir:'up',s:'HIGH TICKET'},
+    ],
+    rev:[140,120,210,190,270,305,360],
+    winners:[
+      {name:'Lampe arc minimaliste',score:91,run:22,store:'glance',trend:'up'},
+      {name:'Miroir arche doré 120cm',score:87,run:18,store:'glance',trend:'up'},
+      {name:'Vase céramique strié',score:82,run:14,store:'glance',trend:'flat'},
+    ],
+    ads:[
+      {n:'Lampe arc — Shopping FR',roas:3.5,cpa:14,ok:true,plat:'G'},
+      {n:'Vase — PMax',roas:2.9,cpa:10,ok:true,plat:'G'},
+      {n:'Lampe arc — Retarget Meta',roas:4.1,cpa:13,ok:true,plat:'M'},
+      {n:'Miroir — Display retarget',roas:0.6,cpa:73,ok:false,plat:'G'},
+    ],
+    alerts:[
+      {t:'Miroir Retarget — CPA 73€ → COUPER',c:'#ff3355',time:'28min',lvl:'red'},
+      {t:'Lampe arc — ROAS 3.5x → SCALER',c:'#00ff88',time:'1h',lvl:'green'},
+      {t:'2 fiches produit en draft',c:'#ffaa00',time:'2h',lvl:'amber'},
+    ],
+    mods:[
+      {n:'RADAR WINNERS',sub:'8 winners · FR',s:'ok'},
+      {n:'CREATIVE FACTORY',sub:'2 briefs en attente',s:'warn'},
+      {n:'SOURCING ENGINE',sub:'EU uniquement',s:'ok'},
+      {n:'PRODUCT BUILDER',sub:'2 fiches en draft',s:'warn'},
+      {n:'ADS OPTIMIZER',sub:'Google · 1 alerte',s:'alert'},
+      {n:'TEAM HUB',sub:'5 tâches glance',s:'ok'},
+    ],
+  },
+  poncho:{
+    kpis:[
+      {l:'CA 30J',v:'3 600€',cls:'amber',c:'c-amber',dir:'up',s:'+8%'},
+      {l:'COMMANDES',v:'19',cls:'cyan',c:'c-cyan',dir:'flat',s:'8 ORG + 11 PAID'},
+      {l:'ROAS META',v:'2.1x',cls:'red',c:'c-red',dir:'down',s:'SOUS SEUIL 2.5x'},
+      {l:'CPA META',v:'52€',cls:'red',c:'c-red',dir:'down',s:'MAX 40€ ⚠'},
+    ],
+    rev:[70,65,100,85,120,115,120],
+    winners:[
+      {name:'Poncho laine alpaga',score:74,run:11,store:'poncho',trend:'up'},
+      {name:'Poncho oversize camel',score:71,run:8,store:'poncho',trend:'flat'},
+    ],
+    ads:[
+      {n:'Poncho alpaga — Feed FR',roas:3.2,cpa:15,ok:true,plat:'M'},
+      {n:'Poncho — Broad interest',roas:1.1,cpa:40,ok:false,plat:'M'},
+      {n:'Poncho — Lookalike 3%',roas:0.7,cpa:67,ok:false,plat:'M'},
+    ],
+    alerts:[
+      {t:'Lookalike 3% — CPA 67€ CRITIQUE → COUPER',c:'#ff3355',time:'12min',lvl:'red'},
+      {t:'Broad interest — ROAS 1.1x sous seuil',c:'#ff3355',time:'45min',lvl:'red'},
+      {t:'Poncho Feed FR — ROAS 3.2x → SCALER',c:'#00ff88',time:'1h',lvl:'green'},
+    ],
+    mods:[
+      {n:'RADAR WINNERS',sub:'4 winners · Mode',s:'ok'},
+      {n:'CREATIVE FACTORY',sub:'1 brief en attente',s:'warn'},
+      {n:'SOURCING ENGINE',sub:'EU + CN comparés',s:'ok'},
+      {n:'PRODUCT BUILDER',sub:'1 fiche en draft',s:'warn'},
+      {n:'ADS OPTIMIZER',sub:'Meta · 2 alertes',s:'alert'},
+      {n:'TEAM HUB',sub:'3 tâches poncho',s:'ok'},
+    ],
+  },
+};
+
+// ── State ────────────────────────────────────────────────────────────────────
+let store = localStorage.getItem('os_store') || 'all';
+let recognition = null;
+let isListening = false;
+const apiKey = localStorage.getItem('os_apikey') || '';
+
+// ── Clock ────────────────────────────────────────────────────────────────────
+function updateClock(){
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// ── Store switch ─────────────────────────────────────────────────────────────
+function setStore(s){
+  store = s;
+  localStorage.setItem('os_store', s);
+  ['all','glance','poncho'].forEach(k=>{
+    const el=document.getElementById('tab-'+k);
+    el.className='store-tab'+(k===s?' active-'+k:'');
+  });
+  render();
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(){
+  const d = DATA[store] || DATA.all;
+  const storeColor = {all:'var(--green)',glance:'var(--cyan)',poncho:'var(--poncho)'};
+
+  // KPIs
+  document.getElementById('kpi-grid').innerHTML = d.kpis.map(k=>`
+    <div class="kpi-box ${k.c}">
+      <div class="kpi-lbl">${k.l}</div>
+      <div class="kpi-val ${k.cls}">${k.v}</div>
+      <div class="kpi-sub ${k.dir}">${k.dir==='up'?'▲':k.dir==='down'?'▼':'◆'} ${k.s}</div>
+    </div>`).join('');
+
+  // Revenue
+  const max = Math.max(...d.rev);
+  const total = d.rev.reduce((a,b)=>a+b,0);
+  document.getElementById('rev-total-label').textContent = total.toLocaleString('fr-FR')+'€ / WEEK';
+  document.getElementById('rev-chart').innerHTML = d.rev.map((v,i)=>`
+    <div class="rev-bar" style="height:${Math.round(v/max*54)}px;background:${storeColor[store]};opacity:${i===d.rev.length-1?1:0.3+(i*0.08)};"></div>`).join('');
+
+  // Winners
+  document.getElementById('winners-count').textContent = d.winners.length;
+  document.getElementById('winners-list').innerHTML = d.winners.map(w=>`
+    <div class="winner-item">
+      <div class="w-score">${w.score}</div>
+      <div style="flex:1;">
+        <div class="w-name">${w.name}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;">${w.store.toUpperCase()} · ${w.run}J RUN</div>
+      </div>
+      <span style="font-size:12px;color:${w.trend==='up'?'var(--green)':'var(--text2)'};">${w.trend==='up'?'▲':'◆'}</span>
+    </div>`).join('');
+
+  // Modules
+  document.getElementById('module-grid').innerHTML = d.mods.map((m,i)=>`
+    <div class="mod-card ${m.s}" onclick="showModule(${i+1})">
+      <div class="mod-num">M${i+1}</div>
+      <div class="mod-name">${m.n}</div>
+      <div class="mod-status ${m.s}">${m.s==='ok'?'● ONLINE':m.s==='warn'?'◐ WARNING':'⚠ ALERT'} · ${m.sub}</div>
+      <span class="mod-arrow">↗</span>
+    </div>`).join('');
+
+  // Ads
+  document.getElementById('ads-list').innerHTML = d.ads.map(a=>`
+    <div class="ads-item">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);min-width:14px;">${a.plat}</span>
+      <span class="ads-name">${a.n}</span>
+      <div class="ads-track"><div class="ads-fill" style="width:${Math.min(a.roas/5*100,100)}%;background:${a.ok?'var(--green)':'var(--red)'};"></div></div>
+      <span class="ads-roas" style="color:${a.ok?'var(--green)':'var(--red)'};">${a.roas}x</span>
+      <span class="ads-cpa" style="color:${a.cpa<=40?'var(--green)':'var(--red)'};">${a.cpa}€ CPA</span>
+    </div>`).join('');
+
+  // Alerts
+  const reds = d.alerts.filter(a=>a.lvl==='red').length;
+  document.getElementById('alert-badge').textContent = reds+' CRITICAL';
+  document.getElementById('alerts-list').innerHTML = d.alerts.map(a=>`
+    <div class="alert-item">
+      <div class="alert-dot" style="background:${a.c};box-shadow:0 0 6px ${a.c};"></div>
+      <span class="alert-text">${a.t}</span>
+      <span class="alert-time">${a.time} AGO</span>
+    </div>`).join('');
+
+  // Campaign matrix
+  document.getElementById('campaign-table').innerHTML = d.ads.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid rgba(0,212,255,0.04);">
+      <div style="width:3px;height:28px;background:${a.ok?'var(--green)':'var(--red)'};border-radius:1px;flex-shrink:0;"></div>
+      <span style="font-size:12px;color:var(--text);flex:1;">${a.n}</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${a.roas>=2.5?'var(--green)':'var(--red)'};">${a.roas}x</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${a.cpa<=40?'var(--green)':'var(--red)'};">${a.cpa}€</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid ${a.ok?'var(--green-border)':'var(--red-border)'};color:${a.ok?'var(--green)':'var(--red)'};">${a.ok?'OK':'⚠ ACTION'}</span>
+    </div>`).join('');
+
+  // Radar stat
+  document.getElementById('radar-stat').textContent = d.winners.length + ' WINNERS DETECTED';
+
+  // Sys log
+  document.getElementById('sys-log').innerHTML = [
+    {t:'00:'+pad(),'m':'STORE MODULE SYNC COMPLETE','c':'msg-ok'},
+    {t:'00:'+pad(),'m':'ADS RULES ENGINE ACTIVE','c':'msg-ok'},
+    {t:'00:'+pad(),'m':'API CONNECTIONS PENDING','c':'msg-warn'},
+    {t:'00:'+pad(),'m':'VOICE ENGINE READY','c':'msg-ok'},
+  ].map(l=>`<div class="log-item"><span class="ts">${l.t}</span><span class="${l.c}">${l.m}</span></div>`).join('');
+}
+
+function pad(){return String(Math.floor(Math.random()*59)).padStart(2,'0')+':'+String(Math.floor(Math.random()*59)).padStart(2,'0');}
+
+// ── Module nav ───────────────────────────────────────────────────────────────
+function showModule(n){
+  const names=['','Radar Winners','Creative Factory','Sourcing Engine','Product Builder','Ads Optimizer','Team Hub'];
+  const resp = document.getElementById('cmd-response');
+  resp.className='cmd-response visible';
+  resp.textContent = '> MODULE '+n+' — '+names[n]+' // Pour accéder au module complet, déploie l\'app sur Vercel (instructions dans la conversation Claude).';
+}
+
+// ── Voice ────────────────────────────────────────────────────────────────────
+function toggleVoice(){isListening?stopVoice():startVoice();}
+
+function startVoice(){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    document.getElementById('voice-status').textContent='NO MIC SUPPORT';
+    return;
+  }
+  isListening=true;
+  document.getElementById('mic-btn').classList.add('listening');
+  document.getElementById('waveform').style.display='flex';
+  document.getElementById('voice-status').textContent='LISTENING...';
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang='fr-FR';
+  recognition.interimResults=true;
+  recognition.onresult=e=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    document.getElementById('cmd-input').value=t;
+    if(e.results[e.results.length-1].isFinal){stopVoice();setTimeout(sendCmd,300);}
+  };
+  recognition.onerror=stopVoice;
+  recognition.onend=()=>{if(isListening)stopVoice();};
+  recognition.start();
+}
+
+function stopVoice(){
+  isListening=false;
+  try{recognition&&recognition.stop();}catch(e){}
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('waveform').style.display='none';
+  document.getElementById('voice-status').textContent='READY';
+}
+
+async function sendCmd(){
+  const q=document.getElementById('cmd-input').value.trim();
+  if(!q) return;
+  const resp=document.getElementById('cmd-response');
+  resp.className='cmd-response visible';
+  resp.textContent='> PROCESSING...';
+  const savedKey=localStorage.getItem('os_apikey')||'';
+  if(savedKey){
+    try{
+      const d=DATA[store]||DATA.all;
+      const sys=`Tu es l'OS d'une machine ecom autonome. Boutique: ${store}. KPIs: ${JSON.stringify(d.kpis)}. Winners: ${d.winners.map(w=>w.name+' score '+w.score).join(', ')}. Alerts: ${d.alerts.map(a=>a.t).join(' | ')}. Réponds en français, 2-3 phrases max, très direct et opérationnel. Commence par "> "`;
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sys,messages:[{role:'user',content:q}]})});
+      const data=await r.json();
+      resp.textContent=data.content?.[0]?.text||'> ERREUR API';
+    }catch(e){resp.textContent='> ERREUR — Vérifie ta clé API dans les paramètres.';}
+  } else {
+    resp.textContent='> '+localAnswer(q);
+  }
+  document.getElementById('cmd-input').value='';
+}
+
+function localAnswer(q){
+  const ql=q.toLowerCase();
+  const d=DATA[store]||DATA.all;
+  if(ql.includes('winner')||ql.includes('produit'))
+    return 'TOP WINNER: '+d.winners[0]?.name+' (SCORE '+d.winners[0]?.score+', '+d.winners[0]?.run+'J RUN). '+d.winners.length+' winners actifs.';
+  if(ql.includes('revenu')||ql.includes('ca')||ql.includes('vente'))
+    return d.kpis[0].v+' DE CA CE MOIS. '+d.kpis[0].s+'. PANIER MOY: '+d.kpis[3].v;
+  if(ql.includes('ads')||ql.includes('roas')||ql.includes('cpa'))
+    return 'ROAS: '+d.kpis[2].v+' | CPA: '+d.kpis[3].v+' | '+d.alerts.filter(a=>a.lvl==='red').length+' ALERTES CRITIQUES. '+d.alerts[0]?.t;
+  if(ql.includes('alert'))
+    return d.alerts[0]?.t||'NO CRITICAL ALERTS';
+  return 'SYSTEM ONLINE. '+d.winners.length+' WINNERS | '+d.kpis[0].v+' CA | '+d.alerts.filter(a=>a.lvl==='red').length+' ALERTES CRITIQUES. Demande: winners, revenus, ads, alertes.';
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+['all','glance','poncho'].forEach(k=>{
+  const el=document.getElementById('tab-'+k);
+  el.className='store-tab'+(k===store?' active-'+k:'');
+});
+render();
+</script>
+</body>
+</html>

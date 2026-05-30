@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const { question, store, kpis, winners, alerts } = req.body || {};
 
-  const sys = `Tu es l'OS d'une machine ecom autonome. Boutique: ${store||'all'}. KPIs: ${JSON.stringify(kpis||[])}. Winners: ${(winners||[]).map(w=>w.name+' score '+w.score).join(', ')}. Alerts: ${(alerts||[]).map(a=>a.t).join(' | ')}. Réponds en français, 2-3 phrases max, très direct. Commence par "> "`;
+  const sys = `OS ecom. Boutique: ${store||'all'}. CA: ${(kpis||[])[0]?.v||'N/A'}. Top winner: ${(winners||[])[0]?.name||'N/A'} score ${(winners||[])[0]?.score||'N/A'}. Alerte principale: ${(alerts||[])[0]?.t||'aucune'}. Réponds en français, 2 phrases max, direct. Commence par "> "`;
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',

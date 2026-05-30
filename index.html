@@ -604,7 +604,7 @@ const DATA = {
 let store = localStorage.getItem('os_store') || 'all';
 let recognition = null;
 let isListening = false;
-const apiKey = localStorage.getItem('os_apikey') || '';
+// Clé API gérée côté serveur — jamais ici
 
 // ── Clock ────────────────────────────────────────────────────────────────────
 function updateClock(){
@@ -758,17 +758,18 @@ async function sendCmd(){
   const resp=document.getElementById('cmd-response');
   resp.className='cmd-response visible';
   resp.textContent='> PROCESSING...';
-  const savedKey=localStorage.getItem('os_apikey')||'';
-  if(savedKey){
-    try{
-      const d=DATA[store]||DATA.all;
-      const sys=`Tu es l'OS d'une machine ecom autonome. Boutique: ${store}. KPIs: ${JSON.stringify(d.kpis)}. Winners: ${d.winners.map(w=>w.name+' score '+w.score).join(', ')}. Alerts: ${d.alerts.map(a=>a.t).join(' | ')}. Réponds en français, 2-3 phrases max, très direct et opérationnel. Commence par "> "`;
-      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sys,messages:[{role:'user',content:q}]})});
-      const data=await r.json();
-      resp.textContent=data.content?.[0]?.text||'> ERREUR API';
-    }catch(e){resp.textContent='> ERREUR — Vérifie ta clé API dans les paramètres.';}
-  } else {
-    resp.textContent='> '+localAnswer(q);
+  // Appel sécurisé — clé Claude sur le serveur Vercel, jamais dans ce fichier
+  try {
+    const d=DATA[store]||DATA.all;
+    const r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question:q,store:store,kpis:d.kpis,winners:d.winners,alerts:d.alerts})
+    });
+    if(!r.ok){resp.textContent='> '+localAnswer(q)+' [Configure CLAUDE_API_KEY sur Vercel]';}
+    else{const data=await r.json();resp.textContent=data.answer||'> '+localAnswer(q);}
+  }catch(e){
+    resp.textContent='> '+localAnswer(q)+' [MODE LOCAL — ouvre via Vercel pour l\'IA réelle]';
   }
   document.getElementById('cmd-input').value='';
 }

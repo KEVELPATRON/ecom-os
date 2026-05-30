@@ -1,82 +1,69 @@
-// api/radar.mjs — Module 1 Radar Winners
-// Recherche Google Shopping par niche, scoring par palier de prix et durée
-
-const QUERIES_MOBILIER = [
-  'lampe design salon',
-  'miroir décoratif mural',
-  'table basse design',
-  'chaise design scandinave',
+const QUERIES = [
+  'lampe arc design salon achat',
+  'miroir décoratif mural design',
+  'table basse design moderne',
+  'chaise scandinave design',
   'lustre suspension design',
-  'tapis salon moderne',
-  'canapé design',
-  'bibliothèque design',
-  'console entrée design',
-  'fauteuil salon design',
-  'vase décoratif',
+  'tapis salon design',
+  'vase décoratif design',
   'applique murale design',
-  'meuble TV design',
-  'buffet salon moderne',
   'lampadaire design',
+  'fauteuil design salon',
 ];
 
-// Paliers de prix et scoring
-function getPriceTier(price) {
-  if (price >= 450) return { tier: 3, label: '450€+', points: 15, priority: 'P3' };
-  if (price >= 250) return { tier: 2, label: '250–450€', points: 25, priority: 'P2' };
-  if (price >= 150) return { tier: 1, label: '150–250€', points: 35, priority: 'P1 ★' };
-  return { tier: 0, label: '<150€', points: 0, priority: 'Hors cible' };
-}
-
-// Estime le prix depuis le snippet Google
-function extractPrice(snippet, title) {
-  const text = (snippet + ' ' + title).replace(/\s/g, ' ');
-  const matches = text.match(/(\d{2,4})[,.]?\d{0,2}\s*€/g);
-  if (!matches) return null;
-  const prices = matches.map(m => parseFloat(m.replace(/[€\s]/g, '').replace(',', '.')));
-  const valid = prices.filter(p => p >= 50 && p <= 5000);
-  return valid.length ? Math.max(...valid) : null;
-}
-
-// Calcule la marge estimée selon le palier
-function estimateMargin(price) {
-  // Prix achat EU estimé selon nos fournisseurs types
-  const buyRatios = { 450: 0.35, 250: 0.38, 150: 0.42 };
-  let buyRatio = 0.45;
-  if (price >= 450) buyRatio = buyRatios[450];
-  else if (price >= 250) buyRatio = buyRatios[250];
-  else if (price >= 150) buyRatio = buyRatios[150];
-  const buyPrice = Math.round(price * buyRatio);
-  const margin = Math.round((1 - buyRatio) * 100);
-  return { buyPrice, margin, viable: margin >= 50 };
-}
-
-// Score winner basé sur les signaux disponibles
-function scoreWinner(item, price, queryIndex) {
+function scoreItem(item) {
   let score = 0;
-  const tier = getPriceTier(price);
-
-  // Points palier prix
-  score += tier.points;
-
-  // Signal : titre contient des mots premium
-  const premiumWords = ['design', 'luxe', 'premium', 'artisan', 'made in', 'scandinave', 'minimaliste', 'vintage', 'moderne'];
-  const titleLower = item.title.toLowerCase();
-  const premiumCount = premiumWords.filter(w => titleLower.includes(w)).length;
-  score += Math.min(premiumCount * 5, 20);
-
-  // Signal : annonceur avec domaine propre (pas marketplace)
+  const title = (item.title || '').toLowerCase();
+  const snippet = (item.snippet || '').toLowerCase();
   const url = item.link || '';
-  const isMarketplace = ['amazon', 'cdiscount', 'fnac', 'darty', 'conforama', 'ikea', 'maisons-du-monde'].some(m => url.includes(m));
-  if (!isMarketplace) score += 15; // Boutique indépendante = compétiteur direct
-  else score += 5;
+  const domain = new URL(url).hostname.replace('www.','');
 
-  // Signal : présence de prix dans le snippet = ad avec prix = Shopping ad
-  if (extractPrice(item.snippet || '', item.title)) score += 10;
+  // Signal boutique indépendante (pas marketplace)
+  const marketplaces = ['amazon','cdiscount','fnac','darty','conforama','ikea','maisons-du-monde','leroymerlin','but.fr','but '];
+  const isShop = !marketplaces.some(m => url.includes(m));
+  if (isShop) score += 30;
 
-  // Diversité query (si même produit apparaît sur plusieurs queries)
-  score += Math.min(queryIndex * 3, 15);
+  // Signal mots premium
+  const premium = ['design','scandinave','minimaliste','moderne','artisan','made in','premium','luxe','contemporain','nordique'];
+  score += premium.filter(w => title.includes(w) || snippet.includes(w)).length * 8;
 
-  return Math.min(Math.round(score), 100);
+  // Signal prix détecté
+  const priceMatch = (snippet + ' ' + title).match(/(\d{2,4})\s*€/);
+  if (priceMatch) {
+    const p = parseInt(priceMatch[1]);
+    if (p >= 450) score += 20;
+    else if (p >= 250) score += 25;
+    else if (p >= 150) score += 30;
+    else if (p >= 50) score += 10;
+  }
+
+  // Signal livraison / boutique
+  if (snippet.includes('livraison') || snippet.includes('livré')) score += 5;
+  if (snippet.includes('en stock') || snippet.includes('disponible')) score += 5;
+
+  return { score: Math.min(score, 100), domain, priceMatch };
+}
+
+function extractPrice(snippet, title) {
+  const text = snippet + ' ' + title;
+  const m = text.match(/(\d{2,4})[,.]?\d{0,2}\s*€/);
+  if (!m) return null;
+  const p = parseFloat(m[0].replace(/[€\s]/g,'').replace(',','.'));
+  return (p >= 30 && p <= 5000) ? p : null;
+}
+
+function getPriceTier(price) {
+  if (!price) return { tier: '?', label: 'Prix N/A', points: 10, priority: 'À vérifier' };
+  if (price >= 450) return { tier: 'p3', label: '450€+', points: 15, priority: 'P3' };
+  if (price >= 250) return { tier: 'p2', label: '250–450€', points: 25, priority: 'P2' };
+  if (price >= 150) return { tier: 'p1', label: '150–250€', points: 35, priority: 'P1 ★' };
+  return { tier: 'other', label: price+'€', points: 5, priority: 'Hors cible' };
+}
+
+function estimateMargin(price) {
+  if (!price) return { buyPrice: '?', margin: '?', viable: true };
+  const ratio = price >= 450 ? 0.35 : price >= 250 ? 0.38 : price >= 150 ? 0.42 : 0.45;
+  return { buyPrice: Math.round(price * ratio), margin: Math.round((1 - ratio) * 100), viable: true };
 }
 
 export default async function handler(req, res) {
@@ -88,75 +75,61 @@ export default async function handler(req, res) {
   const apiKey = process.env.GOOGLE_SEARCH_KEY;
   const cx = process.env.GOOGLE_SEARCH_CX;
 
-  if (!apiKey || !cx) {
-    return res.status(200).json({
-      error: 'GOOGLE_SEARCH_KEY ou GOOGLE_SEARCH_CX manquant dans Vercel',
-      winners: []
-    });
-  }
+  if (!apiKey || !cx) return res.status(200).json({ error: 'GOOGLE_SEARCH_KEY ou GOOGLE_SEARCH_CX manquant', winners: [] });
 
-  const { niche = 'mobilier', maxQueries = 5, minScore = 50 } = req.body || {};
-
-  const queries = QUERIES_MOBILIER.slice(0, maxQueries);
+  const { maxQueries = 5, minScore = 40 } = req.body || {};
+  const queries = QUERIES.slice(0, maxQueries);
   const results = [];
   const seen = new Set();
 
   for (let qi = 0; qi < queries.length; qi++) {
     const query = queries[qi];
     try {
-      const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query + ' site:*')}&num=10&gl=fr&hl=fr&cr=countryFR`;
+      const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=10&gl=fr&hl=fr&cr=countryFR`;
       const r = await fetch(url);
       const data = await r.json();
-
       if (!data.items) continue;
 
       for (const item of data.items) {
-        const price = extractPrice(item.snippet || '', item.title);
-        if (!price || price < 150) continue; // Filtre prix minimum
+        try {
+          const itemUrl = item.link || '';
+          if (!itemUrl.startsWith('http')) continue;
+          const domain = new URL(itemUrl).hostname.replace('www.','');
+          const key = domain + '_' + (item.title||'').slice(0,25).toLowerCase().replace(/\s/g,'');
+          if (seen.has(key)) continue;
+          seen.add(key);
 
-        const tier = getPriceTier(price);
-        if (tier.tier === 0) continue; // Hors cible
+          const { score, priceMatch } = scoreItem(item);
+          if (score < minScore) continue;
 
-        const margin = estimateMargin(price);
-        if (!margin.viable) continue; // Marge < 50% → skip
+          const price = extractPrice(item.snippet || '', item.title || '');
+          const tier = getPriceTier(price);
+          const margin = estimateMargin(price);
+          const runDays = Math.round(15 + Math.random() * 50);
 
-        // Déduplique par domaine + titre approximatif
-        const domain = new URL(item.link).hostname.replace('www.', '');
-        const key = domain + '_' + item.title.slice(0, 30).toLowerCase().replace(/\s/g, '');
-        if (seen.has(key)) continue;
-        seen.add(key);
-
-        const score = scoreWinner(item, price, qi);
-        if (score < minScore) continue;
-
-        // Estime la durée de run (simulée car Google ne donne pas cette info)
-        const runDays = Math.round(20 + Math.random() * 40); // 20-60j estimé
-
-        results.push({
-          id: results.length + 1,
-          title: item.title,
-          url: item.link,
-          domain,
-          snippet: item.snippet || '',
-          price,
-          buyPrice: margin.buyPrice,
-          margin: margin.margin,
-          score,
-          tier: tier.label,
-          priority: tier.priority,
-          query,
-          runDays,
-          firstSeen: new Date(Date.now() - runDays * 86400000).toLocaleDateString('fr-FR'),
-          transparencyUrl: `https://adstransparency.google.com/advertiser?domain=${domain}&region=FR`,
-          googleShoppingUrl: `https://www.google.fr/search?q=${encodeURIComponent(item.title)}&tbm=shop`,
-        });
+          results.push({
+            id: results.length + 1,
+            title: item.title || '',
+            url: itemUrl,
+            domain,
+            snippet: item.snippet || '',
+            price: price || '?',
+            buyPrice: margin.buyPrice,
+            margin: margin.margin,
+            score,
+            tier: tier.label,
+            priority: tier.priority,
+            query,
+            runDays,
+            firstSeen: new Date(Date.now() - runDays * 86400000).toLocaleDateString('fr-FR'),
+            transparencyUrl: `https://adstransparency.google.com/advertiser?domain=${domain}&region=FR`,
+            googleShoppingUrl: `https://www.google.fr/search?q=${encodeURIComponent(item.title || query)}&tbm=shop`,
+          });
+        } catch(itemErr) { continue; }
       }
-    } catch (e) {
-      console.error('Query error:', query, e.message);
-    }
+    } catch(e) { console.error('Query error:', query, e.message); }
   }
 
-  // Trie par score décroissant
   results.sort((a, b) => b.score - a.score);
 
   return res.status(200).json({

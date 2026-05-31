@@ -34,8 +34,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .quick-queries{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
 .qq{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--text3);color:var(--text2);cursor:pointer;letter-spacing:0.5px;background:transparent;transition:all 0.15s;}
 .qq:hover{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);}
-<button class="qq" style="border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);" onclick="generateKeywords()">✦ GÉNÉRER MES MOTS-CLÉS IA</button>
-  
+
 /* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
 .kpi{background:var(--bg2);border:0.5px solid var(--cyan-border);padding:12px 14px;position:relative;overflow:hidden;}
@@ -142,7 +141,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <button class="btn-scan" id="btn-scan" onclick="launchScan()">▶ ANALYSER</button>
   </div>
 
-  <div class="quick-queries">
+  <div class="quick-queries" id="quick-queries">
     <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;padding-top:5px;">REQUÊTES RAPIDES :</span>
     <button class="qq" onclick="setQuery('lampe design salon')">lampe design salon</button>
     <button class="qq" onclick="setQuery('miroir décoratif mural')">miroir déco mural</button>
@@ -152,6 +151,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <button class="qq" onclick="setQuery('lustre suspension design')">lustre suspension</button>
     <button class="qq" onclick="setQuery('lampadaire design')">lampadaire design</button>
     <button class="qq" onclick="setQuery('tapis salon moderne')">tapis salon</button>
+    <button class="qq" id="btn-kw" style="border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);font-weight:600;" onclick="generateKeywords()">✦ GÉNÉRER MES MOTS-CLÉS IA</button>
   </div>
 
   <div class="kpi-row">
@@ -355,10 +355,11 @@ function showError(msg){
       <div class="empty-sub" style="margin-top:8px;">Vérifie SERPAPI_KEY dans Vercel → Environment Variables</div>
     </div>`;
 }
-  async function generateKeywords(){
-  const btn = event.target;
-  btn.textContent = '⟳ GÉNÉRATION...';
+async function generateKeywords(){
+  const btn = document.getElementById('btn-kw');
+  btn.textContent = '⟳ GÉNÉRATION IA...';
   btn.disabled = true;
+  log('Claude génère les mots-clés optimaux pour ta niche...');
   try {
     const r = await fetch('/api/keywords', {
       method: 'POST',
@@ -366,21 +367,23 @@ function showError(msg){
       body: JSON.stringify({niche:'mobilier déco', priceMin:150, priceMax:250})
     });
     const data = await r.json();
+    if(data.error){ log('Erreur: ' + data.error, 'warn'); return; }
     if(data.keywords?.length){
-      // Ajoute les mots-clés générés comme boutons cliquables
-      const container = document.querySelector('.quick-queries');
+      const container = document.getElementById('quick-queries');
+      // Retire les anciens mots-clés générés précédemment
+      container.querySelectorAll('.qq-generated').forEach(el => el.remove());
       data.keywords.forEach(kw => {
         const b = document.createElement('button');
-        b.className = 'qq';
+        b.className = 'qq qq-generated';
         b.textContent = kw;
         b.style.borderColor = 'var(--green)';
         b.style.color = 'var(--green)';
         b.onclick = () => setQuery(kw);
-        container.appendChild(b);
+        container.insertBefore(b, btn);
       });
-      log(`${data.keywords.length} mots-clés générés par Claude`, 'ok');
+      log(data.keywords.length + ' mots-clés générés par Claude ✓ — clique pour analyser', 'ok');
     }
-  } catch(e){ log('Erreur génération: ' + e.message, 'warn'); }
+  } catch(e){ log('Erreur: ' + e.message, 'warn'); }
   finally { btn.textContent = '✦ GÉNÉRER MES MOTS-CLÉS IA'; btn.disabled = false; }
 }
 </script>

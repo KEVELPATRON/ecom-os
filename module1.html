@@ -34,7 +34,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .quick-queries{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
 .qq{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--text3);color:var(--text2);cursor:pointer;letter-spacing:0.5px;background:transparent;transition:all 0.15s;}
 .qq:hover{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);}
-
+<button class="qq" style="border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);" onclick="generateKeywords()">✦ GÉNÉRER MES MOTS-CLÉS IA</button>
+  
 /* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
 .kpi{background:var(--bg2);border:0.5px solid var(--cyan-border);padding:12px 14px;position:relative;overflow:hidden;}
@@ -353,6 +354,34 @@ function showError(msg){
       <div class="empty-sub" style="color:var(--amber);">${msg}</div>
       <div class="empty-sub" style="margin-top:8px;">Vérifie SERPAPI_KEY dans Vercel → Environment Variables</div>
     </div>`;
+}
+  async function generateKeywords(){
+  const btn = event.target;
+  btn.textContent = '⟳ GÉNÉRATION...';
+  btn.disabled = true;
+  try {
+    const r = await fetch('/api/keywords', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({niche:'mobilier déco', priceMin:150, priceMax:250})
+    });
+    const data = await r.json();
+    if(data.keywords?.length){
+      // Ajoute les mots-clés générés comme boutons cliquables
+      const container = document.querySelector('.quick-queries');
+      data.keywords.forEach(kw => {
+        const b = document.createElement('button');
+        b.className = 'qq';
+        b.textContent = kw;
+        b.style.borderColor = 'var(--green)';
+        b.style.color = 'var(--green)';
+        b.onclick = () => setQuery(kw);
+        container.appendChild(b);
+      });
+      log(`${data.keywords.length} mots-clés générés par Claude`, 'ok');
+    }
+  } catch(e){ log('Erreur génération: ' + e.message, 'warn'); }
+  finally { btn.textContent = '✦ GÉNÉRER MES MOTS-CLÉS IA'; btn.disabled = false; }
 }
 </script>
 </body>

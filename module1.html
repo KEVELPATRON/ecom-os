@@ -3,116 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ECOM OS — M1 Radar Winners</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>ECOM OS — M1 Radar Compétiteurs</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#03070f;--bg2:#060d1a;--bg3:#0a1628;--bg4:#222226;
-  --cyan:#00d4ff;--cyan2:#0099cc;--cyan-dim:rgba(0,212,255,0.08);--cyan-glow:rgba(0,212,255,0.15);--cyan-border:rgba(0,212,255,0.25);
-  --green:#00ff88;--green-dim:rgba(0,255,136,0.08);--green-border:rgba(0,255,136,0.25);
-  --amber:#ffaa00;--amber-dim:rgba(255,170,0,0.08);--amber-border:rgba(255,170,0,0.25);
-  --red:#ff3355;--red-dim:rgba(255,51,85,0.08);--red-border:rgba(255,51,85,0.25);
-  --purple:#aa44ff;--purple-dim:rgba(170,68,255,0.08);
-  --text:#c8e8f8;--text2:#5a8aaa;--text3:#2a4a6a;
-  --r:4px;--r2:8px;
-}
+:root{--bg:#03070f;--bg2:#060d1a;--bg3:#0a1628;--bg4:#111820;--cyan:#00d4ff;--cyan-dim:rgba(0,212,255,0.08);--cyan-border:rgba(0,212,255,0.25);--cyan-glow:rgba(0,212,255,0.15);--green:#00ff88;--green-dim:rgba(0,255,136,0.08);--green-border:rgba(0,255,136,0.25);--amber:#ffaa00;--amber-dim:rgba(255,170,0,0.08);--amber-border:rgba(255,170,0,0.25);--red:#ff3355;--red-dim:rgba(255,51,85,0.08);--red-border:rgba(255,51,85,0.25);--purple:#aa44ff;--purple-dim:rgba(170,68,255,0.08);--text:#c8e8f8;--text2:#5a8aaa;--text3:#2a4a6a;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.012) 2px,rgba(0,212,255,0.012) 4px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,212,255,0.025) 40px,rgba(0,212,255,0.026) 41px);pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.012) 2px,rgba(0,212,255,0.012) 4px);pointer-events:none;z-index:0;}
 .shell{position:relative;z-index:1;}
-
-/* Topbar */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;border-bottom:1px solid var(--cyan-border);background:rgba(3,7,15,0.95);position:sticky;top:0;z-index:100;}
 .logo{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:3px;text-shadow:0 0 20px rgba(0,212,255,0.5);}
 .logo-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:blink 2s infinite;display:inline-block;margin-right:8px;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.nav-back{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 12px;border:1px solid var(--cyan-border);color:var(--cyan2);background:var(--cyan-dim);cursor:pointer;letter-spacing:1px;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.nav-back{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 12px;border:1px solid var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);cursor:pointer;letter-spacing:1px;text-decoration:none;}
 .nav-back:hover{background:var(--cyan-glow);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.sys-badge{font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;border:1px solid var(--green-border);color:var(--green);background:var(--green-dim);letter-spacing:1px;}
-
-/* Main */
 .main{padding:24px;max-width:1400px;margin:0 auto;}
-.mod-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
-.mod-title{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--cyan);letter-spacing:2px;text-shadow:0 0 20px rgba(0,212,255,0.3);}
-.mod-sub{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);margin-top:4px;letter-spacing:1px;}
+.mod-title{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--cyan);letter-spacing:2px;margin-bottom:4px;}
+.mod-sub{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:1px;margin-bottom:20px;}
 
-/* Controls */
-.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px;padding:14px 16px;border:1px solid var(--cyan-border);background:var(--cyan-dim);}
-.ctrl-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;}
-.ctrl-select{font-family:'Share Tech Mono',monospace;font-size:11px;background:var(--bg3);border:1px solid var(--cyan-border);color:var(--cyan);padding:6px 10px;cursor:pointer;height:32px;}
-.ctrl-select option{background:var(--bg2);}
-.btn-scan{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:2px;padding:8px 20px;background:var(--cyan-dim);border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;transition:all 0.2s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+/* Search bar */
+.search-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center;padding:14px 16px;border:1px solid var(--cyan-border);background:var(--cyan-dim);}
+.search-input{font-family:'Share Tech Mono',monospace;font-size:14px;background:var(--bg3);border:1px solid var(--cyan-border);color:var(--cyan);padding:10px 16px;flex:1;height:44px;letter-spacing:1px;outline:none;}
+.search-input::placeholder{color:var(--text3);}
+.search-input:focus{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+.btn-scan{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:2px;padding:10px 24px;background:var(--cyan-dim);border:1px solid var(--cyan);color:var(--cyan);cursor:pointer;height:44px;transition:all 0.2s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 .btn-scan:hover{background:var(--cyan-glow);box-shadow:0 0 20px rgba(0,212,255,0.3);}
 .btn-scan:disabled{opacity:0.4;cursor:default;}
-.btn-sm{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 10px;border:1px solid var(--cyan-border);color:var(--text2);background:transparent;cursor:pointer;letter-spacing:1px;}
-.btn-sm:hover{color:var(--cyan);border-color:var(--cyan);}
+
+/* Quick queries */
+.quick-queries{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.qq{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--text3);color:var(--text2);cursor:pointer;letter-spacing:0.5px;background:transparent;transition:all 0.15s;}
+.qq:hover{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);}
 
 /* KPIs */
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
 .kpi{background:var(--bg2);border:0.5px solid var(--cyan-border);padding:12px 14px;position:relative;overflow:hidden;}
 .kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
 .kpi-l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:2px;margin-bottom:6px;}
-.kpi-v{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:-1px;}
+.kpi-v{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;}
 .kpi-v.cyan{color:var(--cyan);text-shadow:0 0 15px rgba(0,212,255,0.4);}
 .kpi-v.green{color:var(--green);text-shadow:0 0 15px rgba(0,255,136,0.4);}
-.kpi-v.amber{color:var(--amber);text-shadow:0 0 15px rgba(255,170,0,0.4);}
+.kpi-v.amber{color:var(--amber);}
 .kpi-s{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;}
 
-/* Filter tabs */
-.filter-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
-.ftab{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 14px;border:1px solid var(--text3);color:var(--text2);cursor:pointer;letter-spacing:1px;background:transparent;transition:all 0.15s;}
-.ftab:hover{border-color:var(--cyan-border);color:var(--cyan);}
-.ftab.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);}
-.ftab.p1.active{border-color:var(--green);color:var(--green);background:var(--green-dim);}
-.ftab.p2.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
-.ftab.p3.active{border-color:var(--purple);color:var(--purple);background:var(--purple-dim);}
+/* Log */
+.scan-log{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);padding:8px 14px;border:0.5px solid var(--cyan-border);background:var(--bg2);margin-bottom:16px;max-height:60px;overflow-y:auto;letter-spacing:0.5px;line-height:1.8;}
+.log-ok{color:var(--green);}
+.log-warn{color:var(--amber);}
+.log-info{color:var(--cyan);}
 
-/* Results grid */
-.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;}
+/* Results */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.results-title{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:2px;}
+.filter-row{display:flex;gap:6px;}
+.ftab{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--text3);color:var(--text2);cursor:pointer;background:transparent;transition:all 0.15s;letter-spacing:1px;}
+.ftab:hover,.ftab.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);}
 
-/* Winner card */
-.winner-card{background:var(--bg2);border:0.5px solid var(--cyan-border);padding:0;position:relative;overflow:hidden;transition:border-color 0.2s;}
-.winner-card:hover{border-color:var(--cyan);}
-.winner-card.p1{border-left:3px solid var(--green);}
-.winner-card.p2{border-left:3px solid var(--amber);}
-.winner-card.p3{border-left:3px solid var(--purple);}
-.wc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:0.5px solid rgba(0,212,255,0.1);background:rgba(0,212,255,0.03);}
-.wc-score{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;padding:3px 10px;border:1px solid;}
-.wc-score.s-high{border-color:var(--green);color:var(--green);background:var(--green-dim);}
-.wc-score.s-med{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
-.wc-score.s-low{border-color:var(--cyan-border);color:var(--cyan2);background:var(--cyan-dim);}
-.wc-tier{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 8px;letter-spacing:1px;}
+/* Competitor cards */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px;}
+.comp-card{background:var(--bg2);border:0.5px solid var(--cyan-border);position:relative;overflow:hidden;transition:border-color 0.2s;}
+.comp-card:hover{border-color:var(--cyan);}
+.comp-card.direct{border-left:3px solid var(--green);}
+.comp-card.marketplace{border-left:3px solid var(--text3);opacity:0.7;}
+.cc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:0.5px solid rgba(0,212,255,0.1);background:rgba(0,212,255,0.03);}
+.cc-score{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;padding:3px 10px;border:1px solid;}
+.score-high{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+.score-med{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
+.score-low{border-color:var(--cyan-border);color:var(--text2);background:var(--bg3);}
+.cc-domain{font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);letter-spacing:1px;}
+.cc-body{padding:12px 14px;}
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.cc-stat{background:var(--bg3);padding:7px 9px;}
+.cc-stat-l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:3px;}
+.cc-stat-v{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;}
+.cc-stat-v.green{color:var(--green);}
+.cc-stat-v.amber{color:var(--amber);}
+.cc-stat-v.cyan{color:var(--cyan);}
+.cc-products{margin-bottom:10px;}
+.cc-product{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid rgba(0,212,255,0.06);}
+.cc-product:last-child{border-bottom:none;}
+.cc-prod-thumb{width:36px;height:36px;object-fit:cover;border:0.5px solid var(--cyan-border);}
+.cc-prod-thumb-placeholder{width:36px;height:36px;background:var(--bg3);border:0.5px solid var(--cyan-border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.cc-prod-info{flex:1;min-width:0;}
+.cc-prod-title{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-prod-price{font-family:'Orbitron',monospace;font-size:11px;color:var(--amber);}
+.cc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.cc-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 12px;border:1px solid;cursor:pointer;letter-spacing:0.5px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s;}
+.cc-btn-cyan{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);}
+.cc-btn-cyan:hover{background:var(--cyan-glow);}
+.cc-btn-green{border-color:var(--green-border);color:var(--green);background:var(--green-dim);}
+.cc-btn-green:hover{background:rgba(0,255,136,0.15);}
+.cc-btn-amber{border-color:var(--amber-border);color:var(--amber);background:var(--amber-dim);}
+.tier-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;letter-spacing:1px;}
 .tier-p1{color:var(--green);border:1px solid var(--green-border);}
 .tier-p2{color:var(--amber);border:1px solid var(--amber-border);}
 .tier-p3{color:var(--purple);border:1px solid rgba(170,68,255,0.3);}
-.wc-body{padding:12px 14px;}
-.wc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3;}
-.wc-domain{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan2);margin-bottom:8px;letter-spacing:0.5px;}
-.wc-snippet{font-size:12px;color:var(--text2);line-height:1.4;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.wc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
-.wc-stat{background:var(--bg3);padding:6px 8px;}
-.wc-stat-l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:2px;}
-.wc-stat-v{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;}
-.wc-stat-v.green{color:var(--green);}
-.wc-stat-v.amber{color:var(--amber);}
-.wc-stat-v.red{color:var(--red);}
-.wc-actions{display:flex;gap:6px;flex-wrap:wrap;}
-.wc-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 10px;border:1px solid;cursor:pointer;letter-spacing:0.5px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s;}
-.wc-btn-primary{border-color:var(--cyan-border);color:var(--cyan);background:var(--cyan-dim);}
-.wc-btn-primary:hover{background:var(--cyan-glow);}
-.wc-btn-green{border-color:var(--green-border);color:var(--green);background:var(--green-dim);}
-.wc-btn-green:hover{background:rgba(0,255,136,0.15);}
-.wc-btn-amber{border-color:var(--amber-border);color:var(--amber);background:var(--amber-dim);}
-.wc-btn-amber:hover{background:rgba(255,170,0,0.15);}
-
-/* Score bar */
-.score-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.score-track{flex:1;height:3px;background:var(--bg4);}
-.score-fill{height:100%;transition:width 0.5s ease;}
-
-/* Empty / loading */
+.tier-other{color:var(--text3);border:1px solid var(--text3);}
+.marketplace-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;color:var(--text3);border:1px solid var(--text3);}
 .empty-state{text-align:center;padding:60px 20px;color:var(--text2);}
 .empty-title{font-family:'Orbitron',monospace;font-size:14px;color:var(--text2);letter-spacing:2px;margin-bottom:8px;}
 .empty-sub{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:1px;}
@@ -120,14 +107,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 @keyframes spin{to{transform:rotate(360deg)}}
 .dot-anim::after{content:'...';animation:dots 1.2s steps(3,end) infinite;}
 @keyframes dots{0%,100%{content:'.'}33%{content:'..'}66%{content:'...'}}
-
-/* Log */
-.scan-log{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);padding:10px 14px;border:0.5px solid var(--cyan-border);background:var(--bg2);margin-bottom:16px;max-height:80px;overflow-y:auto;letter-spacing:0.5px;line-height:1.8;}
-.log-ok{color:var(--green);}
-.log-warn{color:var(--amber);}
-.log-info{color:var(--cyan2);}
-
-/* Status bar */
 .statusbar{position:fixed;bottom:0;left:0;right:0;height:28px;display:flex;align-items:center;gap:20px;padding:0 24px;background:rgba(3,7,15,0.95);border-top:1px solid var(--cyan-border);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:1px;z-index:100;}
 .sb-dot{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:5px;}
 </style>
@@ -139,103 +118,82 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   <div style="display:flex;align-items:center;gap:16px;">
     <a href="/" class="nav-back">← DASHBOARD</a>
     <div>
-      <div class="logo"><span class="logo-dot"></span>M1 — RADAR WINNERS</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;">GOOGLE SHOPPING INTELLIGENCE</div>
+      <div class="logo"><span class="logo-dot"></span>M1 — RADAR COMPÉTITEURS</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;">GOOGLE SHOPPING INTELLIGENCE · SERPAPI</div>
     </div>
   </div>
-  <div class="topbar-right">
-    <span id="store-badge" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px;">GLANCEDESIGN.FR</span>
-    <span class="sys-badge" id="api-status">● API READY</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);">GLANCEDESIGN.FR</span>
+    <span id="api-status" style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;border:1px solid var(--green-border);color:var(--green);background:var(--green-dim);">● SERPAPI READY</span>
     <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);" id="clock"></span>
   </div>
 </div>
 
-<div class="main">
+<div class="main" style="padding-bottom:48px;">
 
-  <div class="mod-header">
-    <div>
-      <div class="mod-title">RADAR WINNERS</div>
-      <div class="mod-sub">// GOOGLE SHOPPING · SCORING PAR PALIER DE PRIX · MARGE MIN 50%</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn-sm" onclick="exportJSON()">↓ EXPORT JSON</button>
-      <button class="btn-sm" onclick="exportCSV()">↓ EXPORT CSV</button>
-    </div>
+  <div style="margin-bottom:20px;">
+    <div class="mod-title">RADAR COMPÉTITEURS</div>
+    <div class="mod-sub">// TAPE UNE REQUÊTE → LA MACHINE ANALYSE QUI FAIT DES ADS GOOGLE SHOPPING EN FRANCE</div>
   </div>
 
-  <!-- Controls -->
-  <div class="controls">
-    <span class="ctrl-label">NICHE :</span>
-    <select class="ctrl-select" id="sel-niche">
-      <option value="mobilier">Mobilier & Déco</option>
-      <option value="mode">Mode & Lifestyle</option>
-      <option value="all">Toutes niches</option>
-    </select>
-    <span class="ctrl-label" style="margin-left:8px;">QUERIES :</span>
-    <select class="ctrl-select" id="sel-queries">
-      <option value="3">3 requêtes (rapide)</option>
-      <option value="5" selected>5 requêtes (standard)</option>
-      <option value="10">10 requêtes (complet)</option>
-    </select>
-    <span class="ctrl-label" style="margin-left:8px;">SCORE MIN :</span>
-    <select class="ctrl-select" id="sel-minscore">
-      <option value="40">40+</option>
-      <option value="50" selected>50+</option>
-      <option value="65">65+</option>
-      <option value="80">80+ (winners only)</option>
-    </select>
-    <button class="btn-scan" id="btn-scan" onclick="launchScan()">▶ LANCER LE SCAN</button>
+  <div class="search-bar">
+    <input class="search-input" type="text" id="search-input" placeholder='ex: "lampe extérieur blanc", "miroir déco mural", "table basse design"...' onkeydown="if(event.key==='Enter')launchScan()">
+    <button class="btn-scan" id="btn-scan" onclick="launchScan()">▶ ANALYSER</button>
   </div>
 
-  <!-- KPIs -->
+  <div class="quick-queries">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;padding-top:5px;">REQUÊTES RAPIDES :</span>
+    <button class="qq" onclick="setQuery('lampe design salon')">lampe design salon</button>
+    <button class="qq" onclick="setQuery('miroir décoratif mural')">miroir déco mural</button>
+    <button class="qq" onclick="setQuery('table basse design')">table basse design</button>
+    <button class="qq" onclick="setQuery('chaise scandinave')">chaise scandinave</button>
+    <button class="qq" onclick="setQuery('vase décoratif design')">vase décoratif</button>
+    <button class="qq" onclick="setQuery('lustre suspension design')">lustre suspension</button>
+    <button class="qq" onclick="setQuery('lampadaire design')">lampadaire design</button>
+    <button class="qq" onclick="setQuery('tapis salon moderne')">tapis salon</button>
+  </div>
+
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-l">WINNERS DÉTECTÉS</div><div class="kpi-v cyan" id="kpi-total">—</div><div class="kpi-s">marge ≥ 50%</div></div>
-    <div class="kpi"><div class="kpi-l">P1 · 150–250€ ★</div><div class="kpi-v green" id="kpi-p1">—</div><div class="kpi-s">priorité max</div></div>
-    <div class="kpi"><div class="kpi-l">P2 · 250–450€</div><div class="kpi-v amber" id="kpi-p2">—</div><div class="kpi-s">ticket moyen</div></div>
-    <div class="kpi"><div class="kpi-l">P3 · 450€+</div><div class="kpi-v" style="color:var(--purple);" id="kpi-p3">—</div><div class="kpi-s">high ticket</div></div>
-    <div class="kpi"><div class="kpi-l">QUERIES LANCÉES</div><div class="kpi-v cyan" id="kpi-queries">—</div><div class="kpi-s">requêtes Google</div></div>
+    <div class="kpi"><div class="kpi-l">COMPÉTITEURS DÉTECTÉS</div><div class="kpi-v cyan" id="kpi-total">—</div><div class="kpi-s">sur cette requête</div></div>
+    <div class="kpi"><div class="kpi-l">BOUTIQUES DIRECTES</div><div class="kpi-v green" id="kpi-direct">—</div><div class="kpi-s">hors marketplaces</div></div>
+    <div class="kpi"><div class="kpi-l">PRIX MOYEN MARCHÉ</div><div class="kpi-v amber" id="kpi-avgprice">—</div><div class="kpi-s">sur la requête</div></div>
+    <div class="kpi"><div class="kpi-l">PRODUITS SCANNÉS</div><div class="kpi-v cyan" id="kpi-products">—</div><div class="kpi-s">résultats Google</div></div>
   </div>
 
-  <!-- Scan log -->
-  <div class="scan-log" id="scan-log">// SYSTÈME PRÊT — Lance un scan pour détecter les winners concurrents</div>
+  <div class="scan-log" id="scan-log">// SYSTÈME PRÊT — Tape une requête et lance l'analyse</div>
 
-  <!-- Filter tabs -->
-  <div class="filter-tabs">
-    <button class="ftab active" id="ftab-all" onclick="setFilter('all')">TOUS</button>
-    <button class="ftab p1" id="ftab-p1" onclick="setFilter('p1')">P1 · 150–250€ ★</button>
-    <button class="ftab p2" id="ftab-p2" onclick="setFilter('p2')">P2 · 250–450€</button>
-    <button class="ftab p3" id="ftab-p3" onclick="setFilter('p3')">P3 · 450€+</button>
-    <button class="ftab" id="ftab-high" onclick="setFilter('high')">SCORE 80+</button>
+  <div class="results-header">
+    <span class="results-title" id="results-title">EN ATTENTE DE REQUÊTE</span>
+    <div class="filter-row">
+      <button class="ftab active" id="ftab-all" onclick="setFilter('all')">TOUS</button>
+      <button class="ftab" id="ftab-direct" onclick="setFilter('direct')">BOUTIQUES DIRECTES</button>
+      <button class="ftab" id="ftab-p1" onclick="setFilter('p1')">150–250€ ★</button>
+    </div>
   </div>
 
-  <!-- Results -->
   <div id="results-area">
     <div class="empty-state">
       <div class="empty-title">RADAR EN ATTENTE</div>
-      <div class="empty-sub">Lance un scan pour détecter les produits winners concurrents sur Google Shopping</div>
+      <div class="empty-sub">Tape une requête produit pour voir qui fait des ads Google Shopping en France</div>
     </div>
   </div>
 
 </div>
 
 <div class="statusbar">
-  <span><span class="sb-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>GOOGLE CUSTOM SEARCH API</span>
-  <span><span class="sb-dot" style="background:var(--cyan);"></span>SCORING ENGINE: ONLINE</span>
-  <span><span class="sb-dot" style="background:var(--amber);animation:blink 2s infinite;"></span>100 REQUÊTES/JOUR GRATUITES</span>
-  <span style="margin-left:auto;" id="sb-count">0 WINNERS EN BASE</span>
+  <span><span class="sb-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>SERPAPI · GOOGLE SHOPPING FR</span>
+  <span><span class="sb-dot" style="background:var(--amber);animation:blink 2s infinite;"></span>100 REQUÊTES/MOIS GRATUITES</span>
+  <span style="margin-left:auto;" id="sb-query">AUCUNE REQUÊTE LANCÉE</span>
 </div>
 
-</div><!-- .shell -->
+</div>
 
 <script>
-let allWinners = [];
+let allCompetitors = [];
 let currentFilter = 'all';
-let isScanning = false;
 
-// Clock
 setInterval(()=>{
-  const n=new Date();
-  document.getElementById('clock').textContent=n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 },1000);
 
 function log(msg, type='info'){
@@ -245,69 +203,64 @@ function log(msg, type='info'){
   el.scrollTop = el.scrollHeight;
 }
 
+function setQuery(q){
+  document.getElementById('search-input').value = q;
+  launchScan();
+}
+
 async function launchScan(){
-  if(isScanning) return;
-  isScanning = true;
+  const query = document.getElementById('search-input').value.trim();
+  if(!query) return;
+
   const btn = document.getElementById('btn-scan');
   btn.disabled = true;
-  btn.textContent = '⟳ SCANNING...';
-  document.getElementById('scan-log').innerHTML = '// SCAN DÉMARRÉ';
-
-  const niche = document.getElementById('sel-niche').value;
-  const maxQ = parseInt(document.getElementById('sel-queries').value);
-  const minScore = parseInt(document.getElementById('sel-minscore').value);
-
-  log(`Niche: ${niche} · ${maxQ} requêtes · Score min: ${minScore}`);
-  log('Connexion Google Custom Search API...');
+  btn.textContent = '⟳ ANALYSE...';
+  document.getElementById('scan-log').innerHTML = '// ANALYSE DÉMARRÉE';
+  log(`Requête: "${query}"`);
+  log('Appel Google Shopping via SerpApi...');
+  document.getElementById('sb-query').textContent = '"' + query.toUpperCase() + '" — EN COURS';
 
   document.getElementById('results-area').innerHTML = `
     <div class="empty-state">
       <div class="loading-ring"></div>
       <div class="empty-title dot-anim">SCAN EN COURS</div>
-      <div class="empty-sub">Analyse Google Shopping · Calcul du scoring winners</div>
+      <div class="empty-sub">Analyse Google Shopping France · Détection compétiteurs</div>
     </div>`;
 
   try {
     const r = await fetch('/api/radar', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({niche, maxQueries: maxQ, minScore})
+      body: JSON.stringify({query})
     });
-
-    if(!r.ok) throw new Error('API radar erreur: ' + r.status);
     const data = await r.json();
 
-    if(data.error){
-      log(data.error, 'warn');
-      showError(data.error);
-      return;
-    }
+    if(data.error){ log(data.error, 'warn'); showError(data.error); return; }
 
-    allWinners = data.winners || [];
-    log(`${data.queries_run} requêtes lancées`, 'ok');
-    log(`${allWinners.length} winners détectés (marge ≥ 50%)`, 'ok');
-    log(`P1: ${data.paliers?.p1||0} · P2: ${data.paliers?.p2||0} · P3: ${data.paliers?.p3||0}`, 'ok');
+    allCompetitors = data.competitors || [];
+    const direct = allCompetitors.filter(c => !c.isMarketplace);
+    const allPrices = allCompetitors.filter(c => c.avgPrice > 0).map(c => c.avgPrice);
+    const avgMarket = allPrices.length ? Math.round(allPrices.reduce((a,b)=>a+b,0)/allPrices.length) : 0;
 
-    updateKPIs(data);
+    log(`${data.raw_products} produits scannés`, 'ok');
+    log(`${allCompetitors.length} vendeurs détectés dont ${direct.length} boutiques directes`, 'ok');
+    if(avgMarket) log(`Prix moyen marché: ${avgMarket}€`, 'ok');
+
+    document.getElementById('kpi-total').textContent = allCompetitors.length;
+    document.getElementById('kpi-direct').textContent = direct.length;
+    document.getElementById('kpi-avgprice').textContent = avgMarket ? avgMarket+'€' : '?';
+    document.getElementById('kpi-products').textContent = data.raw_products || 0;
+    document.getElementById('results-title').textContent = `"${query.toUpperCase()}" — ${allCompetitors.length} COMPÉTITEURS`;
+    document.getElementById('sb-query').textContent = '"' + query.toUpperCase() + '" — ' + allCompetitors.length + ' RÉSULTATS';
+
     renderResults();
-
   } catch(e){
     log('Erreur: ' + e.message, 'warn');
     showError(e.message);
   } finally {
-    isScanning = false;
     btn.disabled = false;
-    btn.textContent = '▶ RELANCER';
+    btn.textContent = '▶ ANALYSER';
   }
-}
-
-function updateKPIs(data){
-  document.getElementById('kpi-total').textContent = data.winners?.length || 0;
-  document.getElementById('kpi-p1').textContent = data.paliers?.p1 || 0;
-  document.getElementById('kpi-p2').textContent = data.paliers?.p2 || 0;
-  document.getElementById('kpi-p3').textContent = data.paliers?.p3 || 0;
-  document.getElementById('kpi-queries').textContent = data.queries_run || 0;
-  document.getElementById('sb-count').textContent = (data.winners?.length||0) + ' WINNERS EN BASE';
 }
 
 function setFilter(f){
@@ -319,114 +272,87 @@ function setFilter(f){
 
 function getFiltered(){
   switch(currentFilter){
-    case 'p1': return allWinners.filter(w=>w.tier==='150–250€');
-    case 'p2': return allWinners.filter(w=>w.tier==='250–450€');
-    case 'p3': return allWinners.filter(w=>w.tier==='450€+');
-    case 'high': return allWinners.filter(w=>w.score>=80);
-    default: return allWinners;
+    case 'direct': return allCompetitors.filter(c => !c.isMarketplace);
+    case 'p1': return allCompetitors.filter(c => c.tier && c.tier.includes('150'));
+    default: return allCompetitors;
   }
 }
 
 function renderResults(){
-  const winners = getFiltered();
-  if(!winners.length){
-    document.getElementById('results-area').innerHTML=`<div class="empty-state"><div class="empty-title">AUCUN RÉSULTAT</div><div class="empty-sub">Modifie les filtres ou relance un scan</div></div>`;
+  const list = getFiltered();
+  if(!list.length){
+    document.getElementById('results-area').innerHTML = `<div class="empty-state"><div class="empty-title">AUCUN RÉSULTAT</div><div class="empty-sub">Modifie les filtres</div></div>`;
     return;
   }
-  document.getElementById('results-area').innerHTML = `<div class="results-grid">${winners.map(renderCard).join('')}</div>`;
+  document.getElementById('results-area').innerHTML = `<div class="comp-grid">${list.map(renderCard).join('')}</div>`;
 }
 
-function renderCard(w){
-  const scoreCls = w.score>=80?'s-high':w.score>=60?'s-med':'s-low';
-  const tierCls = w.tier==='150–250€'?'p1':w.tier==='250–450€'?'p2':'p3';
-  const tierBadgeCls = w.tier==='150–250€'?'tier-p1':w.tier==='250–450€'?'tier-p2':'tier-p3';
-  const marginColor = w.margin>=65?'green':w.margin>=50?'amber':'red';
-  const scoreColor = w.score>=80?'var(--green)':w.score>=60?'var(--amber)':'var(--cyan)';
-  const runColor = w.runDays>=45?'green':w.runDays>=20?'amber':'red';
+function renderCard(c){
+  const scoreCls = c.score>=70?'score-high':c.score>=50?'score-med':'score-low';
+  const tierCls = c.tier&&c.tier.includes('150')?'tier-p1':c.tier&&c.tier.includes('250')?'tier-p2':c.tier&&c.tier.includes('450')?'tier-p3':'tier-other';
+  const priceColor = c.avgPrice>=150?'green':c.avgPrice>0?'amber':'cyan';
+
+  const productsHtml = c.products.map(p=>`
+    <div class="cc-product">
+      ${p.thumbnail
+        ? `<img src="${p.thumbnail}" class="cc-prod-thumb" alt="" onerror="this.style.display='none'">`
+        : `<div class="cc-prod-thumb-placeholder">📦</div>`}
+      <div class="cc-prod-info">
+        <div class="cc-prod-title">${p.title}</div>
+        <div class="cc-prod-price">${p.price}</div>
+      </div>
+      ${p.link?`<a href="${p.link}" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--cyan);text-decoration:none;white-space:nowrap;">↗ VOIR</a>`:''}
+    </div>`).join('');
 
   return `
-  <div class="winner-card ${tierCls}">
-    <div class="wc-head">
+  <div class="comp-card ${c.isMarketplace?'marketplace':'direct'}">
+    <div class="cc-head">
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="wc-score ${scoreCls}">${w.score}</div>
-        <span class="wc-tier ${tierBadgeCls}">${w.tier} · ${w.priority}</span>
+        <div class="cc-score ${scoreCls}">${c.score}</div>
+        <div>
+          <div class="cc-domain">${c.domain}</div>
+          <div style="display:flex;gap:4px;margin-top:3px;">
+            ${c.isMarketplace?`<span class="marketplace-badge">MARKETPLACE</span>`:`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);border:1px solid var(--green-border);padding:1px 6px;">BOUTIQUE DIRECTE</span>`}
+            ${c.tier&&c.tier!=='?'?`<span class="tier-badge ${tierCls}">${c.tier}</span>`:''}
+          </div>
+        </div>
       </div>
-      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);">${w.query?.toUpperCase()||'MOBILIER'}</span>
+      <div style="text-align:right;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);">${c.productCount} PRODUIT${c.productCount>1?'S':''}</div>
+      </div>
     </div>
-    <div class="wc-body">
-      <div class="wc-title">${w.title}</div>
-      <div class="wc-domain">⟐ ${w.domain}</div>
-      <div class="score-bar-wrap">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);min-width:40px;">SCORE</div>
-        <div class="score-track"><div class="score-fill" style="width:${w.score}%;background:${scoreColor};"></div></div>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${scoreColor};">${w.score}/100</span>
-      </div>
-      ${w.snippet?`<div class="wc-snippet">${w.snippet}</div>`:''}
-      <div class="wc-stats">
-        <div class="wc-stat">
-          <div class="wc-stat-l">PRIX VENTE</div>
-          <div class="wc-stat-v amber">${w.price}€</div>
+    <div class="cc-body">
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="cc-stat-l">PRIX MIN</div>
+          <div class="cc-stat-v amber">${c.minPrice}€</div>
         </div>
-        <div class="wc-stat">
-          <div class="wc-stat-l">ACHAT EST.</div>
-          <div class="wc-stat-v cyan">${w.buyPrice}€</div>
+        <div class="cc-stat">
+          <div class="cc-stat-l">PRIX MAX</div>
+          <div class="cc-stat-v amber">${c.maxPrice}€</div>
         </div>
-        <div class="wc-stat">
-          <div class="wc-stat-l">MARGE EST.</div>
-          <div class="wc-stat-v ${marginColor}">${w.margin}%</div>
+        <div class="cc-stat">
+          <div class="cc-stat-l">PRIX MOY</div>
+          <div class="cc-stat-v ${priceColor}">${c.avgPrice||'?'}€</div>
         </div>
       </div>
-      <div class="wc-stats">
-        <div class="wc-stat">
-          <div class="wc-stat-l">RUN EST.</div>
-          <div class="wc-stat-v ${runColor}">${w.runDays}j</div>
-        </div>
-        <div class="wc-stat">
-          <div class="wc-stat-l">1ÈRE VUE</div>
-          <div class="wc-stat-v cyan" style="font-size:10px;">${w.firstSeen}</div>
-        </div>
-        <div class="wc-stat">
-          <div class="wc-stat-l">SOURCE</div>
-          <div class="wc-stat-v" style="color:var(--amber);font-size:10px;">GOOGLE</div>
-        </div>
-      </div>
-      <div class="wc-actions">
-        <a href="${w.url}" target="_blank" class="wc-btn wc-btn-primary">↗ VOIR L'AD</a>
-        <a href="${w.googleShoppingUrl}" target="_blank" class="wc-btn wc-btn-amber">⊞ SHOPPING</a>
-        <a href="${w.transparencyUrl}" target="_blank" class="wc-btn wc-btn-green">⊛ TRANSPARENCY</a>
-        <button class="wc-btn wc-btn-primary" onclick="sendToM2(${w.id})" style="border:none;cursor:pointer;">→ M2 CRÉA</button>
+      ${c.products.length?`<div class="cc-products">${productsHtml}</div>`:''}
+      <div class="cc-actions">
+        <a href="${c.transparencyUrl}" target="_blank" class="cc-btn cc-btn-green">⊛ ADS TRANSPARENCY</a>
+        <a href="${c.shoppingUrl}" target="_blank" class="cc-btn cc-btn-amber">⊞ GOOGLE SHOPPING</a>
+        <a href="https://${c.domain}" target="_blank" class="cc-btn cc-btn-cyan">↗ VISITER SITE</a>
       </div>
     </div>
   </div>`;
 }
 
-function sendToM2(id){
-  const w = allWinners.find(x=>x.id===id);
-  if(w) localStorage.setItem('m2_winner', JSON.stringify(w));
-  alert('Winner envoyé au Module 2 — Creative Factory');
-}
-
 function showError(msg){
-  document.getElementById('results-area').innerHTML=`
+  document.getElementById('results-area').innerHTML = `
     <div class="empty-state">
-      <div class="empty-title" style="color:var(--red);">ERREUR SCAN</div>
+      <div class="empty-title" style="color:var(--red);">ERREUR API</div>
       <div class="empty-sub" style="color:var(--amber);">${msg}</div>
-      <div class="empty-sub" style="margin-top:8px;">Vérifie GOOGLE_SEARCH_KEY et GOOGLE_SEARCH_CX dans Vercel</div>
+      <div class="empty-sub" style="margin-top:8px;">Vérifie SERPAPI_KEY dans Vercel → Environment Variables</div>
     </div>`;
-}
-
-function exportJSON(){
-  if(!allWinners.length){alert('Lance un scan d\'abord');return;}
-  const blob=new Blob([JSON.stringify({module:'radar_winners',winners:allWinners,generated_at:new Date().toISOString()},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='radar_winners.json';a.click();
-}
-
-function exportCSV(){
-  if(!allWinners.length){alert('Lance un scan d\'abord');return;}
-  const header='Titre,Domaine,Prix,Achat estimé,Marge%,Score,Palier,Priority,Run jours,URL\n';
-  const rows=allWinners.map(w=>`"${w.title}","${w.domain}",${w.price},${w.buyPrice},${w.margin},${w.score},"${w.tier}","${w.priority}",${w.runDays},"${w.url}"`).join('\n');
-  const blob=new Blob([header+rows],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='radar_winners.csv';a.click();
 }
 </script>
 </body>
